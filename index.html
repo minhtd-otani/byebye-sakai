@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bye Bye Sakai-san!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Pacifico&display=swap');
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            overflow: hidden;
+            color: white;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 5rem;
+            text-shadow: 0 0 10px #fff, 
+                         0 0 20px #fff, 
+                         0 0 30px #667eea, 
+                         0 0 40px #764ba2, 
+                         0 0 50px #f093fb, 
+                         0 0 60px #4facfe;
+            animation: bounceIn 1.5s ease, textGlow 3s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes textGlow {
+            0%, 100% {
+                text-shadow: 0 0 10px #fff, 
+                             0 0 20px #fff, 
+                             0 0 30px #667eea, 
+                             0 0 40px #764ba2, 
+                             0 0 50px #f093fb, 
+                             0 0 60px #4facfe;
+            }
+            50% {
+                text-shadow: 0 0 15px #fff, 
+                             0 0 30px #fff, 
+                             0 0 45px #667eea, 
+                             0 0 60px #764ba2, 
+                             0 0 75px #f093fb, 
+                             0 0 90px #4facfe;
+            }
+        }
+
+        p {
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .buttons {
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 1.3rem;
+            font-family: 'Noto Sans JP', sans-serif;
+            cursor: pointer;
+            border: 2px solid white;
+            border-radius: 50px;
+            margin: 0 20px;
+            color: white;
+            background: transparent;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        #yes-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(102, 126, 234, 0.4);
+        }
+
+        #no-btn {
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        #no-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .messages-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            z-index: 5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
+
+        /* Hide scrollbar but keep functionality */
+        .messages-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .messages-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .message {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            scroll-snap-align: start;
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .message-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 60px 70px;
+            max-width: 65%;
+            text-align: center;
+            box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.3), 
+                        0 0 80px rgba(102, 126, 234, 0.2),
+                        inset 0 0 60px rgba(255, 255, 255, 0.05);
+            transform: translateY(50px) scale(0.9);
+            opacity: 0;
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), 
+                        opacity 0.8s cubic-bezier(0.19, 1, 0.22, 1),
+                        box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent 30%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                transparent 70%);
+            animation: cardShine 6s ease-in-out infinite;
+        }
+
+        @keyframes cardShine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            50% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+        }
+
+        .message.visible .message-card {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .message-card:hover {
+            box-shadow: 0 20px 60px 0 rgba(0, 0, 0, 0.4), 
+                        0 0 100px rgba(102, 126, 234, 0.3),
+                        inset 0 0 80px rgba(255, 255, 255, 0.08);
+        }
+
+        .message-icon {
+            font-size: 4.5rem;
+            margin-bottom: 25px;
+            animation: icon-float 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-text {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 500;
+            font-size: 2.5em;
+            margin: 0 0 30px 0;
+            color: #ffffff;
+            min-height: 150px;
+            line-height: 1.5;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-text span {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .message-sender {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 0;
+            color: #ffffff;
+            text-align: right;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.5s ease 1s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .message.visible .message-sender {
+            opacity: 1;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0.9;
+            transition: opacity 0.5s;
+            animation: bounce-hint 2s ease-in-out infinite;
+        }
+
+        .scroll-hint.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes bounce-hint {
+            0%, 100% { 
+                transform: translateX(-50%) translateY(0); 
+            }
+            50% { 
+                transform: translateX(-50%) translateY(10px); 
+            }
+        }
+
+        .mouse {
+            width: 25px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            border-radius: 60px;
+            position: relative;
+        }
+
+        .mouse::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            opacity: 1;
+            animation: wheel 2s infinite;
+        }
+
+        @keyframes wheel {
+            to {
+                opacity: 0;
+                top: 25px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.1); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes icon-float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(-5deg); }
+            75% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        /* Smooth scroll progress indicator */
+        .messages-container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb, #4facfe, #00f2fe);
+            z-index: 1000;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="question-container">
+        <h1>酒井さん、さようなら！</h1>
+        <p>HIK プロジェクトは気に入っていますか?</p>
+        <div class="buttons">
+            <button id="yes-btn">持っている</button>
+            <button id="no-btn">ない</button>
+        </div>
+    </div>
+
+    <div class="messages-container" id="messages-container" style="display: none;">
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">🎉</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Xu</p>
+                <div class="scroll-hint">
+                    <div class="mouse"></div>
+                </div>
+            </div>
+        </div>
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">💖</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Denji</p>
+                <div class="scroll-hint">
+                    <div class="mouse"></div>
+                </div>
+            </div>
+        </div>
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">✉️</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Luffy</p>
+                <div class="scroll-hint">
+                    <div class="mouse"></div>
+                </div>
+            </div>
+        </div>
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">🚀</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Min</p>
+                <div class="scroll-hint">
+                    <div class="mouse"></div>
+                </div>
+            </div>
+        </div>
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">😂</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Kyo</p>
+            </div>
+        </div>
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">🎉</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Charlodge</p>
+                 <div class="scroll-hint">
+                    <div class="mouse"></div>
+                </div>
+            </div>
+        </div>
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">💖</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Sora</p>
+                <div class="scroll-hint">
+                    <div class="mouse"></div>
+                </div>
+            </div>
+        </div>
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">✉️</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Tobi</p>
+                <div class="scroll-hint">
+                    <div class="mouse"></div>
+                </div>
+            </div>
+        </div>
+        <div class="message">
+            <div class="message-card">
+                <div class="message-icon">😂</div>
+                <p class="message-text"></p>
+                <p class="message-sender">- Eric</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="confetti"></div>
+
+    <script>
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const questionContainer = document.getElementById('question-container');
+        const messagesContainer = document.getElementById('messages-container');
+        const confettiContainer = document.querySelector('.confetti');
+
+        // --- Message Data ---
+        const messageData = [
+            "新しい道でのご幸運をお祈りしています！",
+            "これまでの貢献に心から感謝します。",
+            "これからも連絡を取り合いましょう。チームでの楽しかった時間を忘れません！",
+            "今後のご活躍を心よりお祈りしております。",
+            "お金持ちになったら、貸した分を忘れないでね！",
+            "新しい道でのご幸運をお祈りしています！",
+            "これまでの貢献に心から感謝します。",
+            "これからも連絡を取り合いましょう。チームでの楽しかった時間を忘れません！",
+            "今後のご活躍を心よりお祈りしております。",
+            "お金持ちになったら、貸した分を忘れないでね！",
+        ];
+
+        // --- Initialize Messages ---
+        const messageTextElements = document.querySelectorAll('.message-text');
+        messageTextElements.forEach((el, index) => {
+            const text = messageData[index];
+            if(text) {
+                el.innerHTML = text.split('').map(char => `<span>${char}</span>`).join('');
+            }
+        });
+
+
+        // --- "No" Button Logic ---
+        function moveNoButton() {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const buttonWidth = noBtn.offsetWidth;
+            const buttonHeight = noBtn.offsetHeight;
+
+            let newX = Math.random() * (viewportWidth - buttonWidth);
+            let newY = Math.random() * (viewportHeight - buttonHeight);
+            
+            noBtn.style.left = `${newX}px`;
+            noBtn.style.top = `${newY}px`;
+        }
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('click', () => alert('Vui lòng chọn "Có"'));
+
+
+        // --- "Yes" Button Logic & Transitions ---
+        yesBtn.addEventListener('click', () => {
+            questionContainer.style.opacity = '0';
+            questionContainer.style.transform = 'scale(0.8)';
+            
+            setTimeout(() => {
+                questionContainer.style.display = 'none';
+                messagesContainer.style.display = 'block';
+                launchConfetti();
+            }, 1000);
+        });
+
+        // --- Scrolling Logic & Animations ---
+        const scrollHints = document.querySelectorAll('.scroll-hint');
+        const messages = document.querySelectorAll('.message');
+
+        function animateText(textElement) {
+            if(!textElement) return;
+            const letters = textElement.querySelectorAll('span');
+            letters.forEach((span, index) => {
+                setTimeout(() => {
+                    span.style.opacity = '1';
+                    span.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Add visible class with slight delay for smoother effect
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                        const textElement = entry.target.querySelector('.message-text');
+                        animateText(textElement);
+                    }, 100);
+                } else {
+                     entry.target.classList.remove('visible');
+                     const textElement = entry.target.querySelector('.message-text');
+                     if (textElement) {
+                        const letters = textElement.querySelectorAll('span');
+                        letters.forEach(span => {
+                            span.style.opacity = '0';
+                            span.style.transform = 'translateY(20px)';
+                        });
+                     }
+                }
+            });
+        }, { 
+            threshold: 0.5,
+            rootMargin: '-10% 0px -10% 0px'
+        });
+
+        messages.forEach(message => {
+            observer.observe(message);
+        });
+
+        messagesContainer.addEventListener('scroll', () => {
+            scrollHints.forEach(hint => {
+                hint.classList.add('hidden');
+            });
+            
+            // Update scroll progress indicator
+            const scrollPercentage = (messagesContainer.scrollTop / (messagesContainer.scrollHeight - messagesContainer.clientHeight));
+            const progressBar = document.querySelector('.messages-container::before');
+            if (progressBar) {
+                progressBar.style.transform = `scaleX(${scrollPercentage})`;
+            }
+        });
+
+
+        // --- Confetti Logic ---
+        function launchConfetti() {
+            const confettiPieces = 150;
+            const colors = ['#ff4e50', '#fc913a', '#f9d62e', '#a8e6cf', '#dcedc1', '#fdffab'];
+
+            for (let i = 0; i < confettiPieces; i++) {
+                const confettiPiece = document.createElement('div');
+                confettiPiece.style.position = 'fixed';
+                confettiPiece.style.width = `${Math.random() * 10 + 5}px`;
+                confettiPiece.style.height = `${Math.random() * 20 + 10}px`;
+                confettiPiece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confettiPiece.style.top = `${Math.random() * 100}vh`;
+                confettiPiece.style.left = `${Math.random() * 100}vw`;
+                confettiPiece.style.opacity = '0';
+                confettiPiece.style.zIndex = '1000';
+                confettiPiece.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confettiContainer.appendChild(confettiPiece);
+
+                animateConfetti(confettiPiece);
+            }
+        }
+
+        function animateConfetti(piece) {
+            const duration = Math.random() * 3 + 2;
+            const xEnd = (Math.random() - 0.5) * 2 * window.innerWidth;
+            const yEnd = window.innerHeight + 100;
+            
+            piece.animate([
+                { transform: `translate(0, -100px) rotate(0deg)`, opacity: 1 },
+                { transform: `translate(${xEnd}px, ${yEnd}px) rotate(720deg)`, opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                easing: 'ease-out',
+            }).onfinish = () => {
+                piece.remove();
+            };
+        }
+    </script>
+</body>
+</html>
